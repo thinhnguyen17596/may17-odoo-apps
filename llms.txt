@@ -1,0 +1,29 @@
+# May17 — Odoo apps
+
+> Paid Odoo 19 modules by Thinh Nguyen Huu. Each module is self-contained, modifies no Odoo core
+> file, and is sold on the Odoo Apps Store under OPL-1.
+
+## Modules
+
+- [May17 Dashboard](https://apps.odoo.com/apps/modules/19.0/may17_dashboard): dashboard builder
+  for Odoo 19 Community and Enterprise. Builds interactive dashboards from any Odoo model with no
+  code, using 17 item types (13 chart types), 10 one-click templates, and a live chart preview
+  inside the configuration form. Depends on base, web and sale only. Exports charts to PNG, data
+  to .xlsx, and the dashboard to PDF from the browser. Charts render with Apache ECharts bundled
+  in the module, so nothing is requested from outside the server.
+- [List Quick Filter](https://apps.odoo.com/apps/modules/19.0/list_quick_filter): inline
+  multi-column filter bar above any Odoo 19 list view, with autocomplete tags and 8 operators.
+- [Month and Year Picker](https://apps.odoo.com/apps/modules/19.0/may17_month_picker): four field
+  widgets that show only the month or only the year on date and datetime fields.
+
+## Documentation
+
+- Hub: https://github.com/thinhnguyen17596/may17-odoo-apps
+- May17 Dashboard: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/may17-dashboard.md
+- List Quick Filter: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/list-quick-filter.md
+- Month and Year Picker: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/month-and-year-picker.md
+
+## Support
+
+- Email: huuthinh17596@gmail.com — answered within 48 hours by the author.
+- Bug fixes are included for the purchased Odoo series.
