@@ -5,6 +5,16 @@
 
 ## Modules
 
+- [AI Assistant and Reports](https://apps.odoo.com/apps/modules/19.0/ai_assistant_reports): AI
+  assistant for Odoo 19 Community and Enterprise, $249. Answers questions asked in plain English
+  with live reports, charts, financial statements and Excel downloads. Ships 20 built-in tools and
+  five financial statements — Profit and Loss, Balance Sheet, Trial Balance, Aged Receivable and
+  Aged Payable — computed from account.move.line rather than through Odoo's Enterprise-only
+  accounting reports engine, so Community gets them too. Connects to a self-hosted Ollama server
+  (no API key, nothing leaves the network) or to Anthropic Claude, OpenAI, Google Gemini, Azure
+  OpenAI, or any OpenAI-compatible endpoint. Charts render as server-side SVG with no external
+  request. Every write is approved by a human first, and every query runs with the asking user's
+  own access rights. Depends on base and web only; no Python package to install.
 - [May17 Dashboard](https://apps.odoo.com/apps/modules/19.0/may17_dashboard): dashboard builder
   for Odoo 19 Community and Enterprise. Builds interactive dashboards from any Odoo model with no
   code, using 17 item types (13 chart types), 10 one-click templates, and a live chart preview
@@ -19,6 +29,7 @@
 ## Documentation
 
 - Hub: https://github.com/thinhnguyen17596/may17-odoo-apps
+- AI Assistant and Reports: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/ai-assistant-and-reports.md
 - May17 Dashboard: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/may17-dashboard.md
 - List Quick Filter: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/list-quick-filter.md
 - Month and Year Picker: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/month-and-year-picker.md

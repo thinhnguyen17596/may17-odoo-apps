@@ -10,6 +10,24 @@ sold on the Odoo Apps Store.
 
 ## The apps
 
+### [AI Assistant and Reports](docs/ai-assistant-and-reports.md) — $249
+
+**AI Assistant and Reports is a paid Odoo 19 module (Community and Enterprise) that adds an AI
+assistant you can ask questions in plain English, and that answers with live reports, charts,
+financial statements and Excel downloads.** It connects to a self-hosted Ollama server, or to
+Anthropic Claude, OpenAI, Google Gemini, Azure OpenAI, or any OpenAI-compatible endpoint.
+
+It ships 20 built-in tools and five financial statements — Profit and Loss, Balance Sheet, Trial
+Balance, Aged Receivable and Aged Payable — computed from journal entries, so Odoo Community gets
+them without an Enterprise subscription. Pointed at a local Ollama server it needs no API key and
+sends nothing outside your network.
+
+📖 [Documentation](docs/ai-assistant-and-reports.md) · 🛒 [Odoo Apps Store](https://apps.odoo.com/apps/modules/19.0/ai_assistant_reports)
+
+![AI Assistant for Odoo 19: ask a question, get a report](images/ai-assistant-and-reports/chat_report.jpg)
+
+---
+
 ### [May17 Dashboard](docs/may17-dashboard.md) — $49
 
 **May17 Dashboard is a paid Odoo 19 module (Community and Enterprise) that lets any user build
@@ -55,8 +73,8 @@ model, no database change.
 
 ### Are these modules free?
 
-No. All three are paid modules sold on the Odoo Apps Store under the OPL-1 licence, at $49, $40 and
-$9. This repository contains their documentation, not their source code.
+No. All four are paid modules sold on the Odoo Apps Store under the OPL-1 licence, at $249, $49, $40
+and $9. This repository contains their documentation, not their source code.
 
 ### Which Odoo versions are supported?
 
@@ -66,7 +84,9 @@ file, so upgrades stay safe.
 ### Do the modules require any Python package?
 
 No. Nothing beyond what Odoo itself already installs. May17 Dashboard bundles its chart library
-inside the module, so it also works on a server with no internet access.
+inside the module, and AI Assistant and Reports reaches AI providers over plain HTTP rather than
+through a vendor SDK — so both work on a server with no internet access, the AI one paired with a
+local Ollama server.
 
 ### Where do I get support?
 
@@ -80,5 +100,6 @@ walkthrough, email the address above.
 
 ---
 
-*Odoo 19 dashboard · Odoo KPI dashboard · Odoo list view filter · Odoo month picker widget ·
-no-code dashboard for Odoo · Odoo apps by May17*
+*Odoo AI assistant · Odoo 19 AI · Odoo AI report generator · Odoo Ollama · Odoo local LLM ·
+Odoo profit and loss Community · Odoo 19 dashboard · Odoo KPI dashboard · Odoo list view filter ·
+Odoo month picker widget · no-code dashboard for Odoo · Odoo apps by May17*
