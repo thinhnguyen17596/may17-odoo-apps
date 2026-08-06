@@ -85,19 +85,22 @@ curl -s -b cookies.txt -H 'Content-Type: application/json' \
      https://your-odoo/may17_dashboard/replica_status
 ```
 
-The reply names the server and states the verdict in plain language. There are four possible
-outcomes, and only the first means the job is done:
+The reply names the server and states the verdict in plain language:
 
-| `served_by_replica` | `replica_configured` | What it means |
-|---|---|---|
-| `true` | `true` | **Working.** Dashboard reads are answered by the standby. |
-| `false` | `true` | Configured, but this read still came from the primary — `db_replica_host` is pointing at the primary, or the server was not restarted. |
-| `false` | `false` | No replica configured. Reads fall back to the primary on a read-only connection. Correct on a single-database deployment. |
-| `false` (`cursor_readonly` also `false`) | — | The route was not served read-only at all. Check the module is 19.0.7.9.0 or later. |
+| `served_by_replica` | `replica_configured` | `cursor_readonly` | What it means |
+|---|---|---|---|
+| `true` | `true` | `true` | **Working.** Dashboard reads are answered by the standby. |
+| `false` | `true` | `true` | Configured, but this read still came from the primary — `db_replica_host` points at the primary, or the server was not restarted. |
+| `false` | `true` | `false` | Configured, but the route was not served read-only. Check the module is 19.0.7.9.0 or later. |
+| `false` | `false` | `false` | **No replica configured — nothing is wrong.** Reads go to the primary, which is correct on a single-database deployment. |
 
 The second row is the one worth watching for: Odoo connects happily to whatever host it is given,
 so a replica host that actually points at the primary looks completely healthy while offloading
 nothing. Nothing in the log would tell you.
+
+`cursor_readonly` is `false` on the last row by design, not by fault: Odoo opens a read-only
+connection pool only once `db_replica_host` is set, so there is no read-only connection to be
+served on until you configure one.
 
 ### A second, cheaper check: that no read secretly writes
 
