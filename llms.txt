@@ -15,6 +15,15 @@
   OpenAI, or any OpenAI-compatible endpoint. Charts render as server-side SVG with no external
   request. Every write is approved by a human first, and every query runs with the asking user's
   own access rights. Depends on base and web only; no Python package to install.
+- [Mobile App API and Sync](https://apps.odoo.com/apps/modules/19.0/mobile_api): backend for
+  mobile apps on Odoo 19 Community and Enterprise, $149. Plain REST over HTTP with real status
+  codes - not Odoo's JSON-RPC envelope - so a client can act on 401 from the status line. Issues
+  one scoped, expiring token per device, revocable individually: unlike an Odoo API key, the token
+  is refused by XML-RPC, so a lost phone does not hand over the database. An administrator lists
+  which models and fields the app may reach; every request still runs with the signed-in user's own
+  access rights, so the configuration can only narrow what Odoo allows, never widen it. Includes a
+  delta-sync endpoint for offline use that handles deletions without adding a deletion log, and
+  push notification token registration. Does not include a mobile app - you build that.
 - [May17 Dashboard](https://apps.odoo.com/apps/modules/19.0/may17_dashboard): dashboard builder
   for Odoo 19 Community and Enterprise. Builds interactive dashboards from any Odoo model with no
   code, using 17 item types (13 chart types), 10 one-click templates, and a live chart preview
@@ -29,6 +38,7 @@
 ## Documentation
 
 - Hub: https://github.com/thinhnguyen17596/may17-odoo-apps
+- Mobile App API and Sync (full REST reference): https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/mobile-api.md
 - AI Assistant and Reports: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/ai-assistant-and-reports.md
 - May17 Dashboard: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/may17-dashboard.md
 - May17 Dashboard deployment and administration (read replica, permissions,

@@ -28,6 +28,20 @@ sends nothing outside your network.
 
 ---
 
+### [Mobile App API and Sync](docs/mobile-api.md) — $149
+
+**Mobile App API and Sync is a paid Odoo 19 module (Community and Enterprise) that turns an Odoo
+database into a backend a mobile app can talk to**: a versioned REST API, one revocable token per
+device, offline synchronisation and push notification delivery.
+
+Odoo has JSON-RPC and API keys, but an API key is global and equal to the password over XML-RPC,
+nothing tells one phone from another, and nothing answers "what changed since I was last online".
+This supplies those. You build the app; this is the way in.
+
+📖 [API reference](docs/mobile-api.md) · 🛒 [Odoo Apps Store](https://apps.odoo.com/apps/modules/19.0/mobile_api)
+
+---
+
 ### [May17 Dashboard](docs/may17-dashboard.md) — $49
 
 **May17 Dashboard is a paid Odoo 19 module (Community and Enterprise) that lets any user build
@@ -74,8 +88,7 @@ model, no database change.
 
 ### Are these modules free?
 
-No. All four are paid modules sold on the Odoo Apps Store under the OPL-1 licence, at $249, $49, $40
-and $9. This repository contains their documentation, not their source code.
+No. All five are paid modules sold on the Odoo Apps Store under the OPL-1 licence, at $249, $149, $49, $40 and $9. This repository contains their documentation, not their source code.
 
 ### Which Odoo versions are supported?
 
