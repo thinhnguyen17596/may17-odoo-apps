@@ -20,6 +20,7 @@ phone app needs:
 | To know which phone is calling | Nothing — a key carries no device identity |
 | "What changed since I was last online?" | Nothing |
 | Push notifications | Nothing |
+| A notification the user can come back to and mark read | Nothing |
 
 ## At a glance
 
@@ -291,6 +292,103 @@ Store the FCM or APNs token for this device, after the user grants notification 
 **Request** `{"push_token": "fcm-token-..."}` → **Response** `{"ok": true}`
 
 Send `null` to stop notifications for this device without signing it out.
+
+---
+
+## `POST /notifications`
+
+List this user's notifications, newest first. A push is a banner that may never
+arrive, or may be swiped off a lock screen and never seen again; this is where
+the message actually lives, so the app can show a list and a badge whether or
+not the push got through.
+
+**Request**
+
+```json
+{"limit": 50, "offset": 0, "unread_only": false}
+```
+
+**Response `200`**
+
+```json
+{
+  "ok": true,
+  "unread": 2,
+  "notifications": [
+    {
+      "id": 6,
+      "title": "Đơn hàng SO0042",
+      "body": "Administrator: Khách *yêu cầu giao sớm* 2 ngày.",
+      "res_model": "res.partner",
+      "res_id": 9,
+      "category": "message",
+      "is_read": false,
+      "read_on": null,
+      "create_date": "2026-08-06 13:03:36"
+    }
+  ]
+}
+```
+
+`unread` is sent on every list so the badge stays right without a second call.
+Empty fields are `null`, never `false` — a typed client cannot decode a field
+that is sometimes a boolean and sometimes a string. `res_model` and `res_id`
+are what the app deep-links on when the row is tapped.
+
+`category` is `"message"` for a mirrored Odoo message, `"activity"` for an
+assigned activity, and whatever an automated action passed for anything else.
+
+---
+
+## `POST /notifications/read`
+
+Mark notifications read, or all of them at once.
+
+**Request** `{"ids": [6, 7]}` or `{"all": true}`
+
+Pass `{"ids": [6], "read": false}` to mark one unread again.
+
+**Response `200`** → `{"ok": true, "updated": 2, "unread": 0}`
+
+`all` exists because an app cannot implement "mark all read" by listing first
+when there are hundreds. The record rule is what stops one user marking
+another's, so an id belonging to somebody else is refused rather than ignored.
+
+---
+
+## Where notifications come from
+
+Three sources, and none of them needs the app developer to do anything:
+
+1. **Odoo messages.** Anything Odoo decides a user should be told about — a
+   comment on a record they follow, an approval note, a message from a
+   colleague — is mirrored to their phone, for every Odoo app installed, with
+   no per-app configuration. Odoo already resolves followers and recipients;
+   this listens rather than re-deciding, so the app never disagrees with the
+   web client about who hears what. HTML is flattened to plain text and cut to
+   300 characters.
+   Switch it off under **Settings → Mobile API → Send Odoo messages to the app**.
+2. **Assigned activities.** When work is assigned to somebody, they are told.
+   Activities do not go through the inbox, so without this they are visible
+   only to a person already looking at the web client — exactly the person who
+   does not need a phone.
+3. **Anything else, from Python.** One call, from an automated action, a server
+   action or another module:
+
+   ```python
+   env['mobile.notification'].notify(
+       users,                      # a res.users recordset
+       title='Đơn nghỉ phép được duyệt',
+       body='Nghỉ phép 12-14/08 đã được quản lý duyệt.',
+       res_model='hr.leave', res_id=leave.id,
+       category='approval',
+   )
+   ```
+
+   It stores first and pushes second, so a Firebase outage costs the banner and
+   not the message. `push_state` on each row records what happened: `sent`,
+   `failed` with the reason, or `no_device` when the person has not installed
+   the app yet.
 
 ---
 
