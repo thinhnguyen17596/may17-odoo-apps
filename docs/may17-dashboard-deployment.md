@@ -71,27 +71,67 @@ For aggregated figures this is the trade being made deliberately: slightly stale
 exchange for not loading the database everyone else is working in. If a dashboard must be exact to
 the second, do not configure a replica — the module then reads the primary as before.
 
-### Verifying it actually works
+## How to prove reads really come from the replica
 
-You do not need a real replica to check the routing. Start Odoo with:
+Marking a route read-only only promises it does not write. It proves nothing about *which* server
+answered. So the module ships a route that asks PostgreSQL directly, over the same connection every
+dashboard read uses: `pg_is_in_recovery()` is **true on a standby and false on a primary**.
+
+Sign in as a Settings administrator and call it:
+
+```bash
+curl -s -b cookies.txt -H 'Content-Type: application/json' \
+     -d '{"jsonrpc":"2.0","method":"call","params":{}}' \
+     https://your-odoo/may17_dashboard/replica_status
+```
+
+The reply names the server and states the verdict in plain language. There are four possible
+outcomes, and only the first means the job is done:
+
+| `served_by_replica` | `replica_configured` | What it means |
+|---|---|---|
+| `true` | `true` | **Working.** Dashboard reads are answered by the standby. |
+| `false` | `true` | Configured, but this read still came from the primary — `db_replica_host` is pointing at the primary, or the server was not restarted. |
+| `false` | `false` | No replica configured. Reads fall back to the primary on a read-only connection. Correct on a single-database deployment. |
+| `false` (`cursor_readonly` also `false`) | — | The route was not served read-only at all. Check the module is 19.0.7.9.0 or later. |
+
+The second row is the one worth watching for: Odoo connects happily to whatever host it is given,
+so a replica host that actually points at the primary looks completely healthy while offloading
+nothing. Nothing in the log would tell you.
+
+### A second, cheaper check: that no read secretly writes
+
+A route marked read-only that writes anyway still works — PostgreSQL refuses the write, Odoo opens
+a connection to the primary and retries the whole request — but it is then served twice, and half
+the benefit is gone. To confirm that never happens, start Odoo with:
 
 ```
 odoo-bin --dev=replica
 ```
 
-This makes the read-only cursor genuinely read-only against the same database, so any write
-attempted on a read-only route shows up immediately. Open a dashboard, then search the log:
+which makes the read-only cursor genuinely read-only against the same database, open every kind of
+dashboard, then search the log:
 
 ```
 grep "retrying with a read/write cursor" odoo.log
 ```
 
-**No matches is the correct result** — it means every dashboard read stayed on the read-only
-cursor. A match names a route that wrote something and had to be retried on the primary; the
-request still succeeds, but it is served twice.
+**No matches is the correct result.**
 
-To confirm against a real replica, watch connections on the standby while someone opens a
-dashboard, or compare query volume on the primary before and after configuring `db_replica_host`.
+### Confirming from the database side
+
+If you would rather not trust the application at all, watch the standby while someone opens a
+dashboard:
+
+```sql
+-- run this on the replica
+SELECT count(*), state, query
+FROM pg_stat_activity
+WHERE datname = '<your database>'
+GROUP BY state, query;
+```
+
+Aggregation queries against your business tables should appear there, not on the primary.
 
 ---
 
@@ -144,12 +184,15 @@ migration and no configuration change.
 
 ### Dashboards still load from the primary
 
-Check, in order:
+Call `/may17_dashboard/replica_status` first — it tells you which of the four states you are in
+without guessing. Then check, in order:
 
 1. `db_replica_host` is set in the config file the server actually loaded — not a different one.
-2. The server was restarted after the change.
-3. The module is 19.0.7.8.0 or later; earlier versions do not mark any route read-only.
-4. The log has no `retrying with a read/write cursor` warnings, which would mean a read route is
+2. **That host is a standby, not the primary.** Run `SELECT pg_is_in_recovery();` against it; it
+   must return `true`. This is the most common mistake, and nothing else reports it.
+3. The server was restarted after the change.
+4. The module is 19.0.7.9.0 or later; earlier versions do not mark any route read-only.
+5. The log has no `retrying with a read/write cursor` warnings, which would mean a read route is
    writing and being retried on the primary.
 
 ### A dashboard shows figures a user should not see
