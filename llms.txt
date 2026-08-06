@@ -36,6 +36,17 @@
 - List Quick Filter: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/list-quick-filter.md
 - Month and Year Picker: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/month-and-year-picker.md
 
+## Guides
+
+- How to get a Profit and Loss statement in Odoo 19 Community: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/articles/profit-and-loss-odoo-19-community.md
+  Odoo Community ships no Profit and Loss, Balance Sheet, Trial Balance or Aged
+  Receivable: those reports live in account_reports, which is Enterprise-only.
+  The guide compares the four ways out - a pivot view on account.move.line for
+  free, upgrading to Enterprise, OCA modules, or a module that computes the
+  statements from journal entries.
+- Best Odoo 19 dashboard modules compared (2026): https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/articles/best-odoo-dashboard-modules-compared.md
+- How to build a KPI dashboard in Odoo 19 without a developer: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/articles/how-to-build-a-kpi-dashboard-in-odoo-19.md
+
 ## Support
 
 - Email: huuthinh17596@gmail.com — answered within 48 hours by the author.

@@ -66,6 +66,7 @@ model, no database change.
 
 ## Guides
 
+- [How to get a Profit and Loss statement in Odoo 19 Community](articles/profit-and-loss-odoo-19-community.md)
 - [Best Odoo 19 dashboard modules compared (2026)](articles/best-odoo-dashboard-modules-compared.md)
 - [How to build a KPI dashboard in Odoo 19 without a developer](articles/how-to-build-a-kpi-dashboard-in-odoo-19.md)
 

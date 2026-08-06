@@ -33,6 +33,20 @@ Billing month, invoice month, subscription period, payroll month, attendance per
 budget year, contract year, accounting period, production planning — anywhere the day carries no
 meaning and only invites wrong input.
 
+## Installing it — where to find it in the Apps list
+
+Odoo's Apps screen opens with an **Apps** filter already switched on, and that filter shows only
+full applications. This module is a field widget rather than an application, so it does not appear
+until you take the filter off. That single step is what people miss.
+
+1. Open **Apps** and press **Update Apps List**.
+2. Click the small **x** on the **Apps** tag in the search box to remove the filter.
+3. Search for **Month and Year Picker**, or for the technical name `may17_month_picker`.
+4. Press **Install**.
+
+There is no menu to open afterwards — the widget becomes available on date fields, so the next step
+is putting `widget="month"` on one.
+
 ## Technical details
 
 - Frontend only: 2 source files, no Python model, no database change

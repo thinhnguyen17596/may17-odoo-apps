@@ -33,6 +33,22 @@ Filter puts those fields on the screen, above the rows, where they are obvious.
 - Dark mode support and a responsive layout for tablets
 - No Odoo core modification — safe for upgrades
 
+## Installing it — where to find it in the Apps list
+
+Odoo's Apps screen opens with an **Apps** filter already switched on, and that filter shows only
+full applications. List Quick Filter extends the list views you already have rather than adding an
+application of its own, so it does not appear until you take the filter off. That single step is
+what people miss.
+
+1. Open **Apps** and press **Update Apps List**.
+2. Click the small **x** on the **Apps** tag in the search box to remove the filter.
+3. Search for **List Quick Filter**, or for the technical name `list_quick_filter`.
+4. Press **Install**.
+
+Then configure it from **Settings → Technical → Automation → Quick Search Configuration**, choosing
+the model and the fields users should be able to filter on. Developer mode has to be on for the
+Technical menu to be visible.
+
 ## Frequently asked questions
 
 ### How is this different from Odoo's own search panel?
