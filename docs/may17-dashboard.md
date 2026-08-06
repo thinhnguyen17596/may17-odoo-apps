@@ -36,6 +36,10 @@ including one with no CRM, no Inventory and no Manufacturing.
 - **Export built in.** Any chart to PNG, any item or the whole dashboard to `.xlsx`, the whole
   dashboard to PDF through the browser — no server-side PDF engine required.
 - **Runs offline.** The chart library ships inside the module, so no request leaves your server.
+- **Reads from the replica.** Dashboard aggregation is the shape of query that slows a primary
+  database down, so every read is served from the read replica when one is configured — and from
+  the primary, unchanged, when one is not. See the
+  [deployment guide](may17-dashboard-deployment.md).
 
 ![Live chart preview](../images/may17-dashboard/live_preview.jpg)
 
@@ -66,6 +70,9 @@ A template is only offered when its app is installed, so the picker always match
 4. Open **Dashboard → Dashboards → New**.
 
 Requires Odoo 19 (Community or Enterprise). Python dependencies: none beyond Odoo's own.
+
+Running a database replica, or setting up who may build dashboards? See the
+**[deployment and administration guide](may17-dashboard-deployment.md)**.
 
 ## Frequently asked questions
 
@@ -102,6 +109,14 @@ Dashboard works on an air-gapped installation.
 ### Does the data refresh automatically?
 
 Yes. Choose one of 7 auto-refresh intervals between 15 seconds and 10 minutes, per dashboard.
+
+### Can dashboards read from a database replica instead of the primary?
+
+Yes, from version 19.0.7.8.0. Set `db_replica_host` on the Odoo server and every dashboard read is
+served from the replica, so aggregation stops competing with the people working in the primary
+database. Building and editing dashboards still writes to the primary. With no replica configured
+the same code reads the primary unchanged — there is nothing to switch on. Details, including the
+replication-lag trade-off, are in the [deployment guide](may17-dashboard-deployment.md).
 
 ### How does it handle multi-company?
 

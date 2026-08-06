@@ -36,7 +36,7 @@ one-click templates and a live preview that renders the finished chart while you
 
 It depends on three modules only — `base`, `web` and `sale` — so it installs on any database.
 
-📖 [Documentation](docs/may17-dashboard.md) · 🛒 [Odoo Apps Store](https://apps.odoo.com/apps/modules/19.0/may17_dashboard)
+📖 [Documentation](docs/may17-dashboard.md) · 🔧 [Deployment guide](docs/may17-dashboard-deployment.md) · 🛒 [Odoo Apps Store](https://apps.odoo.com/apps/modules/19.0/may17_dashboard)
 
 ![May17 Dashboard for Odoo 19](images/may17-dashboard/dashboard_overview.jpg)
 

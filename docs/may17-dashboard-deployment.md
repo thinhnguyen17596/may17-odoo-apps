@@ -1,0 +1,184 @@
+# May17 Dashboard — deployment and administration guide
+
+**This guide is for whoever runs the Odoo server**, not for the person building dashboards. It
+covers pointing dashboard reads at a database replica, how the two permission groups work, and how
+to diagnose the two problems that actually come up.
+
+For what the module does and how to build a dashboard, see the
+[product page](may17-dashboard.md).
+
+Applies to **May17 Dashboard 19.0.7.8.0** and later, on Odoo 19 Community and Enterprise.
+
+---
+
+## Serving dashboard reads from a read replica
+
+A dashboard is aggregation — grouped counts and sums over whole tables. That is the shape of query
+that slows a primary database down while people are trying to work in it. From 19.0.7.8.0 every
+route that only reads is marked read-only, so Odoo serves it from its read-only connection pool,
+which points at the replica.
+
+### What to configure
+
+Nothing in the module. Two options on the Odoo server:
+
+```ini
+[options]
+db_replica_host = replica.internal      ; hostname of the standby
+db_replica_port = 5432
+```
+
+The same values can come from the environment instead, which is usually easier in a container:
+
+```
+PGHOST_REPLICA=replica.internal
+PGPORT_REPLICA=5432
+```
+
+The replica uses the same database name, user and password as the primary.
+
+### If you do not configure a replica
+
+Everything keeps working. Odoo's `Registry.cursor(readonly=True)` falls back to a read/write cursor
+on the primary when no replica exists, so a single-database deployment runs exactly the same code
+with no switch to turn on and nothing to undo.
+
+### Which routes go where
+
+| Route | Database |
+|---|---|
+| `fetch_dashboard_data` | replica |
+| `fetch_item_data` | replica |
+| `get_dashboard_list` | replica |
+| `get_list_data_offset` | replica |
+| `get_templates` | replica |
+| `export_xlsx` | replica |
+| Creating, editing, deleting, reordering, saving layout, ticking a to-do | primary |
+
+Building and editing dashboards always reaches the primary. Only viewing them moves.
+
+### Replication lag: agree this with your users first
+
+A replica is behind the primary — usually by well under a second, but it is never exactly current.
+Two consequences worth stating before anyone reports them as bugs:
+
+- A record created a moment ago may not be counted on the dashboard yet.
+- **Editing a dashboard writes to the primary and the next read comes from the replica**, so an
+  administrator who saves an item and immediately refreshes can briefly see the previous version.
+  Refreshing again resolves it.
+
+For aggregated figures this is the trade being made deliberately: slightly stale numbers in
+exchange for not loading the database everyone else is working in. If a dashboard must be exact to
+the second, do not configure a replica — the module then reads the primary as before.
+
+### Verifying it actually works
+
+You do not need a real replica to check the routing. Start Odoo with:
+
+```
+odoo-bin --dev=replica
+```
+
+This makes the read-only cursor genuinely read-only against the same database, so any write
+attempted on a read-only route shows up immediately. Open a dashboard, then search the log:
+
+```
+grep "retrying with a read/write cursor" odoo.log
+```
+
+**No matches is the correct result** — it means every dashboard read stayed on the read-only
+cursor. A match names a route that wrote something and had to be retried on the primary; the
+request still succeeds, but it is served twice.
+
+To confirm against a real replica, watch connections on the standby while someone opens a
+dashboard, or compare query volume on the primary before and after configuring `db_replica_host`.
+
+---
+
+## Permissions
+
+The module ships two groups, under **Dashboards** in a user's access rights:
+
+| Group | Can |
+|---|---|
+| **User** | Open dashboards shared with them. Cannot create or configure anything. |
+| **Manager** | Everything a User can, plus create dashboards, configure items and manage menus. |
+
+Every internal user is a Dashboard **User** automatically, so a dashboard shared with a role is
+visible without an administrator granting anything first. Assign **Manager** to the people who
+build dashboards.
+
+### Why Manager needs to read field metadata
+
+Configuring an item means choosing a model and a field, so a Manager needs read access to
+`ir.model.fields` and `ir.model` — Odoo 19 gives ordinary internal users none. From 19.0.7.7.1 the
+module grants that read, **to the Manager group only**. It is deliberately not granted to the User
+group, because every internal user is implied into that one and granting it there would expose the
+whole database schema to everybody.
+
+Viewing a dashboard needs no such right: an item's configuration is read on the viewer's behalf
+after their permission to see the item has been checked.
+
+### Record rules
+
+Each dashboard carries a company and record rules isolate data per company. The domain variables
+`%UID` and `%MYCOMPANY` resolve at render time, so one dashboard definition shows each person their
+own figures.
+
+---
+
+## Troubleshooting
+
+### Every card says "You are not allowed to access 'Fields' (ir.model.fields) records"
+
+Charts, KPIs and list views fail while simple count tiles still work, and administrators see a
+perfectly good dashboard.
+
+**Cause:** a version before 19.0.7.7.1. Odoo 19 gives internal users no access at all to
+`ir.model.fields`, and an item stores each of its "which field" settings as a link to that model,
+so an ordinary user could not read the item's own configuration. Count tiles survived because a
+count is the one computation that never reads a field name.
+
+**Fix:** upgrade to 19.0.7.7.1 or later and update the module (`-u may17_dashboard`). No data
+migration and no configuration change.
+
+### Dashboards still load from the primary
+
+Check, in order:
+
+1. `db_replica_host` is set in the config file the server actually loaded — not a different one.
+2. The server was restarted after the change.
+3. The module is 19.0.7.8.0 or later; earlier versions do not mark any route read-only.
+4. The log has no `retrying with a read/write cursor` warnings, which would mean a read route is
+   writing and being retried on the primary.
+
+### A dashboard shows figures a user should not see
+
+Dashboard items read business data with elevated rights by design, so that a shared dashboard shows
+the same total to everyone it is shared with. Control who sees a dashboard by sharing it with the
+right roles, not by relying on each viewer's record rules over the underlying model.
+
+---
+
+## Upgrading
+
+Update the module after copying a new version into the addons path:
+
+```
+odoo-bin -u may17_dashboard -d <database> --stop-after-init
+```
+
+The module modifies no Odoo core file and stores its data in its own tables, so upgrades carry no
+migration step.
+
+---
+
+## Support
+
+**huuthinh17596@gmail.com** — answered within 48 hours by the author. Bug fixes are included for
+the purchased Odoo series.
+
+---
+
+*Odoo dashboard read replica · Odoo db_replica_host · Odoo readonly route · Odoo dashboard
+permissions · Odoo dashboard troubleshooting · May17 Dashboard administration*

@@ -31,6 +31,8 @@
 - Hub: https://github.com/thinhnguyen17596/may17-odoo-apps
 - AI Assistant and Reports: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/ai-assistant-and-reports.md
 - May17 Dashboard: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/may17-dashboard.md
+- May17 Dashboard deployment and administration (read replica, permissions,
+  troubleshooting): https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/may17-dashboard-deployment.md
 - List Quick Filter: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/list-quick-filter.md
 - Month and Year Picker: https://github.com/thinhnguyen17596/may17-odoo-apps/blob/main/docs/month-and-year-picker.md
 
